@@ -1,0 +1,46 @@
+GET http://localhost:8080/
+Accept: */*
+Cache-Control: no-cache
+
+###
+
+GET http://localhost:8080/
+Accept: */*
+Cache-Control: no-cache
+
+###
+
+GET http://localhost:8080
+Accept: */*
+Cache-Control: no-cache
+
+###
+
+POST http://localhost:8080/bike?tag=11111&stato=funzionante
+Accept: */*
+Cache-Control: no-cache
+
+<> 2019-03-29T095212.500.html
+
+###
+
+POST http://localhost:8080/bike?tag=11111&stato=funzionante
+Accept: */*
+Cache-Control: no-cache
+
+<> 2019-03-28T111501.500.html
+
+###
+
+POST http://localhost:8080/bike?tag=11111&stato=funzionante
+Accept: */*
+Cache-Control: no-cache
+
+###
+
+POST http://localhost:8080/resources?tag=11111&stato=funzionante
+Accept: */*
+Cache-Control: no-cache
+
+###
+
