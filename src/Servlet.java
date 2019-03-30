@@ -1,3 +1,4 @@
+import com.sun.java.util.jar.pack.Instruction;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -265,8 +266,9 @@ public class Servlet extends javax.servlet.http.HttpServlet {
 
     }
 
+    @SuppressWarnings("Duplicates")
     protected void doGet(javax.servlet.http.HttpServletRequest request, javax.servlet.http.HttpServletResponse response) throws javax.servlet.ServletException, IOException {
-
+    //PER AUTENTICAZIONE LOGIN
         int count;
         int i;
 
@@ -280,7 +282,7 @@ public class Servlet extends javax.servlet.http.HttpServlet {
 
             Connection conn = dataSource.getConnection();
             Statement stmt = conn.createStatement();
-            ResultSet rs = stmt.executeQuery("SELECT * FROM bici");
+            ResultSet rs = stmt.executeQuery("SELECT * FROM utenti");
             /*A ResultSet is a Java object that contains the results of executing an SQL query. In other words, it contains the rows that satisfy the conditions of the query.
              * The data stored in a ResultSet object is retrieved through a set of get methods that allows access to the various columns of the current row.*/
 
@@ -329,12 +331,253 @@ public class Servlet extends javax.servlet.http.HttpServlet {
     }
 
 
-
+    @SuppressWarnings("Duplicates")
     protected void doPut(javax.servlet.http.HttpServletRequest request, javax.servlet.http.HttpServletResponse response) throws javax.servlet.ServletException, IOException {
 
+
+        String new_tag;
+        String new_stato;
+        String new_nome;
+        String new_cogn;
+        String new_ind;
+        String new_mail;
+        String new_pwd;
+        Boolean new_disp;
+        Boolean new_ndisp;
+
+
+        response.setContentType("application/json");
+
+        try {
+
+            MariaDbDataSource dataSource = new MariaDbDataSource();
+            dataSource.setServerName("localhost");
+            dataSource.setDatabaseName("bike_db");
+            dataSource.setUser("root");
+            dataSource.setPassword("");
+            PreparedStatement stmt;
+
+            Connection conn;
+
+            conn = dataSource.getConnection();
+
+
+            Enumeration<String> parameterNames = request.getParameterNames();//SET DEI POSSIBILI VALORI DELLA REQUEST (nel nostro caso: isbn - titolo - autore - casaed...)
+
+            while (parameterNames.hasMoreElements()) {
+
+                String paramName = parameterNames.nextElement();
+                String paramValue = request.getParameter(paramName);//ottengo il valore del parametro che ha nome *paramName*
+
+                switch(paramName) {
+
+                    //aggiorna la tupla:
+                    case "tag":
+                        if(paramValue!= null) {
+                            tag = paramValue;
+                        }break;
+                    case "id_tess"://non è per l'utente, che invece potra solo modificare i propri dati personali
+                        if(paramValue!= null) {
+                            id_tess = paramValue;
+                        }break;
+                    case "id_staz":
+                        if(paramValue!= null) {
+                            id_staz = paramValue;
+                        }break;
+                    case "data_end":
+                        if(paramValue!= null) {
+                            data_end = (Date)paramValue;//CONTROLLARE: i formati di data_end e data_start devono essere uguali per essere sottratti tra di loro!!!
+                        }break;
+                    //nuovi valori
+                    case "new_tag":
+                        if(paramValue!= null) {
+                           new_tag = paramValue;
+                        }break;
+                    case "new_stato":
+                        if(paramValue!= null) {
+                           new_stato = paramValue;
+                        }break;
+                    case "new_nome":
+                        if(paramValue!= null) {
+                           new_nome = paramValue;
+                        }break;
+                    case "new_cogn":
+                        if(paramValue!= null) {
+                            new_cogn = paramValue;
+                        }break;
+                    case "new_ind":
+                        if(paramValue!= null) {
+                            new_ind = paramValue;
+                        }break;
+                    case "new_mail":
+                        if(paramValue!= null) {
+                            new_mail = paramValue;
+                        }break;
+                    case "new_pwd": //HASHING & SALTING
+                        if(paramValue!= null) {
+                            new_pwd = paramValue;
+                        }break;
+                    case "new_disp":
+                        if(paramValue!= null) {
+                            new_disp = Boolean.parseBoolean(paramValue);
+                        }break;
+                    case "new_ndisp":
+                        if(paramValue!= null) {
+                            new_ndisp = Boolean.parseBoolean(paramValue);
+                        }break;
+
+
+
+                }
+
+
+            }
+
+
+
+            switch (request.getRequestURI())
+            {
+                case "/bike":
+                    break;
+
+                case "/utente":
+                    break;
+
+                case "/staz":
+                    break;
+
+                case "/nol":
+                    break;
+                    
+            }
+
+
+            stmt = conn.prepareStatement("UPDATE `libri` SET `isbn`=?,`titolo`=?,`autore`=?,`casaed`=? WHERE `isbn`=?;");
+
+
+            stmt.setString(1,new_isbn);
+            stmt.setString(2,new_titolo);
+            stmt.setString(3,new_autore);
+            stmt.setString(4,new_casaed);
+            stmt.setString(5,isbn);
+            /*stmt.setString(6,titolo);
+            stmt.setString(7,autore);
+            stmt.setString(8,casaed);*/
+
+
+            int righe_aggiornate = stmt.executeUpdate();
+
+            if(righe_aggiornate!=0)
+            {
+                response.getWriter().println("Aggiornamento avvenuto correttamente. Righe aggiornate: " + righe_aggiornate);
+            }else
+            {
+                response.getWriter().println("Aggiornamento non avvenuto.");
+            }
+
+
+            response.getWriter().println("Righe aggiornate: " + righe_aggiornate);
+
+            stmt.close();
+            conn.close();
+
+        } catch (SQLException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
     }
 
+    @SuppressWarnings("Duplicates")
     protected void doDelete(javax.servlet.http.HttpServletRequest request, javax.servlet.http.HttpServletResponse response) throws javax.servlet.ServletException, IOException {
+
+        String tag="";
+
+        try {
+
+            MariaDbDataSource dataSource = new MariaDbDataSource();
+            dataSource.setServerName("localhost");
+            dataSource.setDatabaseName("bike_db");
+            dataSource.setUser("root");
+            dataSource.setPassword("");
+            PreparedStatement stmt;
+            Connection conn;
+            conn = dataSource.getConnection();
+            response.setContentType("application/json");
+
+            Enumeration<String> parameterNames = request.getParameterNames();//SET DEI POSSIBILI VALORI DELLA REQUEST (nel nostro caso: isbn - titolo - autore - casaed...)
+            String paramName;
+            String paramValue;
+
+            //while (parameterNames.hasMoreElements()) {
+
+            paramName = parameterNames.nextElement();
+
+            paramValue = request.getParameter(paramName);//ottengo il valore del parametro che ha nome *paramName*
+
+            if (paramName.equalsIgnoreCase("tag") && paramValue != null) {
+                //cancella la tupla con il seguente tag:
+                tag = paramValue;
+            }else if (paramName.equalsIgnoreCase("id_tess") && paramValue != null)
+            {
+                id_tess = paramValue;
+            }
+
+        //} WHILE BRACE
+
+            //debug
+            response.getWriter().println(tag); response.getWriter().println(id_tess);
+
+            switch (request.getRequestURI())
+            {
+                case "/bike":
+                    stmt = conn.prepareStatement("DELETE FROM bici WHERE tag=?;");
+                    stmt.setString(1,tag);
+
+                    int righe_cancellate = stmt.executeUpdate();
+
+                    if(righe_cancellate!=0)
+                    {
+                        response.getWriter().println("Cancellazione avvenuta correttamente. Righe cancellate: " + righe_cancellate);
+                        //JSON RESPONSE CODE
+
+                    }else
+                    {
+                        response.getWriter().println("Cancellazione non avvenuta");
+                        //JSON RESPONSE CODE
+                    }
+
+                    stmt.close();
+                    conn.close();
+                    break;
+
+                case "/utente":
+                    stmt = conn.prepareStatement("DELETE FROM utenti WHERE id_tess=?;");
+                    stmt.setString(1,id_tess);
+
+                    righe_cancellate = stmt.executeUpdate();
+
+                    if(righe_cancellate!=0)
+                    {
+                        response.getWriter().println("Cancellazione avvenuta correttamente. Righe cancellate: " + righe_cancellate);
+                        //JSON RESPONSE CODE
+
+                    }else
+                    {
+                        response.getWriter().println("Cancellazione non avvenuta");
+                        //JSON RESPONSE CODE
+                    }
+
+                    stmt.close();
+                    conn.close();
+                    break;
+
+            }
+
+
+        } catch (SQLException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
 
     }
 
