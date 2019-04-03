@@ -1,4 +1,3 @@
-import com.sun.java.util.jar.pack.Instruction;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -6,6 +5,8 @@ import org.mariadb.jdbc.MariaDbDataSource;
 
 import java.io.IOException;
 import java.sql.*;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Enumeration;
 
 public class Servlet extends javax.servlet.http.HttpServlet {
@@ -24,7 +25,7 @@ public class Servlet extends javax.servlet.http.HttpServlet {
     boolean ndisp;
     String ind_staz="";
     String data_start="";
-    String data_end="null";
+    Date data_end=null;
     int value;
 
     protected void doPost(javax.servlet.http.HttpServletRequest request, javax.servlet.http.HttpServletResponse response) throws javax.servlet.ServletException, IOException {
@@ -120,7 +121,7 @@ public class Servlet extends javax.servlet.http.HttpServlet {
                         break;
                     case "data_end":
                         if (paramValue != null) {
-                            data_end = paramValue;
+                            data_end = (Date) new SimpleDateFormat("dd/MM/yy").parse(paramValue);;
                         }
                         break;
                 }
@@ -227,6 +228,7 @@ public class Servlet extends javax.servlet.http.HttpServlet {
                     if(value!=0)
                     {
                         response.setStatus(200);//in json
+
                     }else
                     {
                         response.setStatus(400);
@@ -255,7 +257,7 @@ public class Servlet extends javax.servlet.http.HttpServlet {
 
 
 
-        } catch (SQLException e) {
+        } catch (SQLException | ParseException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
@@ -335,15 +337,15 @@ public class Servlet extends javax.servlet.http.HttpServlet {
     protected void doPut(javax.servlet.http.HttpServletRequest request, javax.servlet.http.HttpServletResponse response) throws javax.servlet.ServletException, IOException {
 
 
-        String new_tag;
-        String new_stato;
-        String new_nome;
-        String new_cogn;
-        String new_ind;
-        String new_mail;
-        String new_pwd;
-        Boolean new_disp;
-        Boolean new_ndisp;
+        String new_tag = "";
+        String new_stato = "";
+        String new_nome="";
+        String new_cogn="";
+        String new_ind="";
+        String new_mail="";
+        String new_pwd="";
+        Boolean new_disp=false;
+        Boolean new_ndisp=false;
 
 
         response.setContentType("application/json");
@@ -361,6 +363,7 @@ public class Servlet extends javax.servlet.http.HttpServlet {
 
             conn = dataSource.getConnection();
 
+            //RESULT SET SULLA CONNECTION E GET DATE SU RESULTSET PER RECUPERARE DATA_END DALLA "BICICLETTA" CHE TERMINA IL NOLEGGIO
 
             Enumeration<String> parameterNames = request.getParameterNames();//SET DEI POSSIBILI VALORI DELLA REQUEST (nel nostro caso: isbn - titolo - autore - casaed...)
 
@@ -386,7 +389,7 @@ public class Servlet extends javax.servlet.http.HttpServlet {
                         }break;
                     case "data_end":
                         if(paramValue!= null) {
-                            data_end = (Date)paramValue;//CONTROLLARE: i formati di data_end e data_start devono essere uguali per essere sottratti tra di loro!!!
+                            data_end = (Date) new SimpleDateFormat("dd/MM/yyyy").parse(paramValue);
                         }break;
                     //nuovi valori
                     case "new_tag":
@@ -438,50 +441,117 @@ public class Servlet extends javax.servlet.http.HttpServlet {
             switch (request.getRequestURI())
             {
                 case "/bike":
+                    stmt = conn.prepareStatement("UPDATE `bici` SET `tag`=?,`stato`=? WHERE `tag`=?;");
+
+                    stmt.setString(1,new_tag);
+                    stmt.setString(2,new_stato);
+                    stmt.setString(3,tag);
+
+                    int value = stmt.executeUpdate();
+
+                    if(value!=0)
+                    {
+                        response.setStatus(200);
+                    }else
+                    {
+                        response.setStatus(400);
+                    }
+                    
+                    stmt.close();
+                    conn.close();
+
                     break;
 
                 case "/utente":
+
+                    stmt = conn.prepareStatement("UPDATE `utenti` SET `nome`=?,`cogn`=?`ind`=?,`mail`=?`pwd`=? WHERE `id_tess`=?;");
+
+                    stmt.setString(1,new_nome);
+                    stmt.setString(2,new_cogn);
+                    stmt.setString(3,new_ind);
+                    stmt.setString(4,new_mail);
+                    stmt.setString(5,new_pwd);
+                    stmt.setString(6,id_tess);
+
+                    value = stmt.executeUpdate();
+
+                    if(value!=0)
+                    {
+                        response.setStatus(200);
+                    }else
+                    {
+                        response.setStatus(400);
+                    }
+
+                    stmt.close();
+                    conn.close();
                     break;
 
                 case "/staz":
+                    stmt = conn.prepareStatement("UPDATE `stazioni` SET `disp`=?,`ndisp`=? WHERE `id_staz`=?;");
+
+                    stmt.setBoolean(1,new_disp);
+                    stmt.setBoolean(2,new_ndisp);
+                    stmt.setString(3,id_staz);
+
+                    value = stmt.executeUpdate();
+
+                    if(value!=0)
+                    {
+                        response.setStatus(200);
+                    }else
+                    {
+                        response.setStatus(400);
+                    }
+
+                    stmt.close();
+                    conn.close();
+
                     break;
 
                 case "/nol":
+                    SimpleDateFormat format = new SimpleDateFormat("dd/MM/yy");
+                    java.util.Date ds=null;
+                    java.util.Date de=null;
+
+                    int sec_cred = 0;
+                    //int sec_cred = data_end - data_start [in secondi]
+                    try {
+                        ds = format.parse(data_start);
+                        de = (java.util.Date) format.parse(String.valueOf(data_end));
+                    } catch (ParseException e) {
+                        e.printStackTrace();
+                    }
+
+
+                    sec_cred = Math.toIntExact((ds.getTime() - de.getTime()) / 1000);
+
+
+                    stmt = conn.prepareStatement("UPDATE `noleggi` SET `sec_cred`=?,`data_end`=? WHERE `id_tess_fk`=?;");
+
+                    stmt.setInt(1,sec_cred);
+                    stmt.setString(2, String.valueOf(data_end));
+                    stmt.setString(3,id_tess);
+
+                    value = stmt.executeUpdate();
+
+                    if(value!=0)
+                    {
+                        response.setStatus(200);
+                    }else
+                    {
+                        response.setStatus(400);
+                    }
+
+                    stmt.close();
+                    conn.close();
                     break;
                     
             }
 
 
-            stmt = conn.prepareStatement("UPDATE `libri` SET `isbn`=?,`titolo`=?,`autore`=?,`casaed`=? WHERE `isbn`=?;");
 
-
-            stmt.setString(1,new_isbn);
-            stmt.setString(2,new_titolo);
-            stmt.setString(3,new_autore);
-            stmt.setString(4,new_casaed);
-            stmt.setString(5,isbn);
-            /*stmt.setString(6,titolo);
-            stmt.setString(7,autore);
-            stmt.setString(8,casaed);*/
-
-
-            int righe_aggiornate = stmt.executeUpdate();
-
-            if(righe_aggiornate!=0)
-            {
-                response.getWriter().println("Aggiornamento avvenuto correttamente. Righe aggiornate: " + righe_aggiornate);
-            }else
-            {
-                response.getWriter().println("Aggiornamento non avvenuto.");
-            }
-
-
-            response.getWriter().println("Righe aggiornate: " + righe_aggiornate);
-
-            stmt.close();
-            conn.close();
-
-        } catch (SQLException e) {
+        } catch (SQLException | ParseException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
