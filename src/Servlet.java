@@ -24,10 +24,14 @@ public class Servlet extends javax.servlet.http.HttpServlet {
     boolean disp;
     boolean ndisp;
     String ind_staz="";
-    String data_start="";
-    Date data_end=null;
-    int value;
+    java.util.Date data_start;
+    java.util.Date data_end=null;
 
+    JSONObject jsonObject = new JSONObject();
+    JSONArray jsonArray = new JSONArray();
+
+
+    @SuppressWarnings("Duplicates")
     protected void doPost(javax.servlet.http.HttpServletRequest request, javax.servlet.http.HttpServletResponse response) throws javax.servlet.ServletException, IOException {
 
         response.setContentType("application/json");
@@ -99,6 +103,16 @@ public class Servlet extends javax.servlet.http.HttpServlet {
                             sec_cred = Integer.parseInt(paramValue);
                         }
                         break;
+                    case "pwd":
+                        if (paramValue != null) {
+                            pwd = paramValue;
+                        }
+                        break;
+                    case "id_staz":
+                        if (paramValue != null) {
+                            id_staz = paramValue;
+                        }
+                        break;
                     case "disp":
                         if (paramValue != null) {
                             disp = Boolean.parseBoolean(paramValue);
@@ -114,22 +128,21 @@ public class Servlet extends javax.servlet.http.HttpServlet {
                             ind_staz = paramValue;
                         }
                         break;
-                    case "data_start":
+                    /*case "data_start":
                         if (paramValue != null) {
-                            data_start = paramValue;
+                            data_start = new SimpleDateFormat("dd/MM/yy").parse(paramValue);
                         }
                         break;
                     case "data_end":
                         if (paramValue != null) {
-                            data_end = (Date) new SimpleDateFormat("dd/MM/yy").parse(paramValue);;
+                            data_end = new SimpleDateFormat("dd/MM/yy").parse(paramValue);
                         }
-                        break;
+                        break;*/
                 }
 
 
             }
 
-           // query += "(" + "'" + isbn + "'" + "," + "'" + titolo + "'" + "," + "'" + autore + "'" + "," + "'" + casaed + "'" + ");";
 
             /*****CHECK ENDPOINT*****/
 
@@ -143,11 +156,16 @@ public class Servlet extends javax.servlet.http.HttpServlet {
 
                     if(value!=0)
                     {
-                        response.setStatus(201);//in json
+                        jsonObject.put("response_code",201);
+                        jsonArray.put(jsonObject);
+
                     }else
                     {
-                        response.setStatus(400);
+                        jsonObject.put("response_code",400);
+                        jsonArray.put(jsonObject);
                     }
+
+                    response.getWriter().println(jsonArray);
 
 
                     stmt.close();
@@ -166,11 +184,17 @@ public class Servlet extends javax.servlet.http.HttpServlet {
 
                     if(value!=0)
                     {
-                        response.setStatus(201);
+                        jsonObject.put("response_code",201);
+                        jsonArray.put(jsonObject);
+
+
                     }else
                     {
-                        response.setStatus(400);
+                        jsonObject.put("response_code",400);
+                        jsonArray.put(jsonObject);
                     }
+
+                    response.getWriter().println(jsonArray);
 
 
                     stmt.close();
@@ -178,42 +202,66 @@ public class Servlet extends javax.servlet.http.HttpServlet {
                     break;
                 case "/staz":
                     stmt = conn.prepareStatement("INSERT INTO `stazioni`(`id_staz`, `disp`, `ndisp`,`ind_staz`) VALUES (?,?,?,?);");
+
+
                     stmt.setString(1,id_staz);
                     stmt.setBoolean(2,disp);
                     stmt.setBoolean(3,ndisp);
+                    /*
+                    * true/true stazione piena a metà
+                    * true/false stazione vuota
+                    * false/true stazione piena
+                    * false/false impossibile (chiusa?)
+                    *
+                    * */
+
+
                     stmt.setString(4,ind_staz);
 
                     value = stmt.executeUpdate();
 
                     if(value!=0)
                     {
-                        response.setStatus(200);//in json
+                        jsonObject.put("response_code",201);
+                        jsonArray.put(jsonObject);
+
                     }else
                     {
-                        response.setStatus(400);
+                        jsonObject.put("response_code",400);
+                        jsonArray.put(jsonObject);
                     }
 
+                    response.getWriter().println(jsonArray);
 
                     stmt.close();
                     conn.close();
                     break;
                 case "/nol":
+                    //java.sql.Date sql_data_start = new java.sql.Date(data_start.getTime());
                     stmt = conn.prepareStatement("INSERT INTO `noleggi`(`id_tess`, `data_start`, `data_end`,`tag`) VALUES (?,?,?,?);");
                     stmt.setString(1,id_tess);
-                    stmt.setString(2,data_start);
-                    stmt.setNull(3, Types.NULL);//OK?
+
+                    //non metterli!
+                    stmt.setNull(2,Types.NULL);//SU MYSQL IL CAMPO DEVE POTER PERMETTERE IL NULL
+                    stmt.setNull(3, Types.NULL);//SU MYSQL IL CAMPO DEVE POTER PERMETTERE IL NULL
+
                     stmt.setString(4,tag);
 
                     value = stmt.executeUpdate();
 
                     if(value!=0)
                     {
-                        response.setStatus(200);//in json
+                        jsonObject.put("response_code",201);
+                        jsonArray.put(jsonObject);
+
                     }else
                     {
-                        response.setStatus(400);
+                        jsonObject.put("response_code",400);
+                        jsonArray.put(jsonObject);
                     }
 
+
+                    response.getWriter().println(jsonArray);
                     stmt.close();
                     conn.close();
                     break;
@@ -227,13 +275,16 @@ public class Servlet extends javax.servlet.http.HttpServlet {
 
                     if(value!=0)
                     {
-                        response.setStatus(200);//in json
+                        jsonObject.put("response_code",201);
+                        jsonArray.put(jsonObject);
 
                     }else
                     {
-                        response.setStatus(400);
+                        jsonObject.put("response_code",400);
+                        jsonArray.put(jsonObject);
                     }
 
+                    response.getWriter().println(jsonArray);
 
                     stmt.close();
                     conn.close();
@@ -242,22 +293,7 @@ public class Servlet extends javax.servlet.http.HttpServlet {
 
 
 
-
-            /*stmt = conn.prepareStatement("DELETE FROM libri WHERE isbn=?;");
-            stmt.setString(1,isbn);*/
-
-
-
-
-            //response.getWriter().println(query); DEBUG
-
-
-
-
-
-
-
-        } catch (SQLException | ParseException e) {
+        } catch (SQLException | ParseException | JSONException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
@@ -363,7 +399,6 @@ public class Servlet extends javax.servlet.http.HttpServlet {
 
             conn = dataSource.getConnection();
 
-            //RESULT SET SULLA CONNECTION E GET DATE SU RESULTSET PER RECUPERARE DATA_END DALLA "BICICLETTA" CHE TERMINA IL NOLEGGIO
 
             Enumeration<String> parameterNames = request.getParameterNames();//SET DEI POSSIBILI VALORI DELLA REQUEST (nel nostro caso: isbn - titolo - autore - casaed...)
 
@@ -387,11 +422,13 @@ public class Servlet extends javax.servlet.http.HttpServlet {
                         if(paramValue!= null) {
                             id_staz = paramValue;
                         }break;
+
+
+                    //nuovi valori
                     case "data_end":
                         if(paramValue!= null) {
-                            data_end = (Date) new SimpleDateFormat("dd/MM/yyyy").parse(paramValue);
+                            data_end = new SimpleDateFormat("dd/MM/yyyy").parse(paramValue);
                         }break;
-                    //nuovi valori
                     case "new_tag":
                         if(paramValue!= null) {
                            new_tag = paramValue;
@@ -416,7 +453,7 @@ public class Servlet extends javax.servlet.http.HttpServlet {
                         if(paramValue!= null) {
                             new_mail = paramValue;
                         }break;
-                    case "new_pwd": //HASHING & SALTING
+                    case "new_pwd": //...HASHING & SALTING...
                         if(paramValue!= null) {
                             new_pwd = paramValue;
                         }break;
@@ -451,11 +488,16 @@ public class Servlet extends javax.servlet.http.HttpServlet {
 
                     if(value!=0)
                     {
-                        response.setStatus(200);
+                        jsonObject.put("response_code",201);
+                        jsonArray.put(jsonObject);
+
                     }else
                     {
-                        response.setStatus(400);
+                        jsonObject.put("response_code",400);
+                        jsonArray.put(jsonObject);
                     }
+
+                    response.getWriter().println(jsonArray);
                     
                     stmt.close();
                     conn.close();
@@ -477,11 +519,16 @@ public class Servlet extends javax.servlet.http.HttpServlet {
 
                     if(value!=0)
                     {
-                        response.setStatus(200);
+                        jsonObject.put("response_code",201);
+                        jsonArray.put(jsonObject);
+
                     }else
                     {
-                        response.setStatus(400);
+                        jsonObject.put("response_code",400);
+                        jsonArray.put(jsonObject);
                     }
+
+                    response.getWriter().println(jsonArray);
 
                     stmt.close();
                     conn.close();
@@ -498,11 +545,16 @@ public class Servlet extends javax.servlet.http.HttpServlet {
 
                     if(value!=0)
                     {
-                        response.setStatus(200);
+                        jsonObject.put("response_code",201);
+                        jsonArray.put(jsonObject);
+
                     }else
                     {
-                        response.setStatus(400);
+                        jsonObject.put("response_code",400);
+                        jsonArray.put(jsonObject);
                     }
+
+                    response.getWriter().println(jsonArray);
 
                     stmt.close();
                     conn.close();
@@ -510,38 +562,48 @@ public class Servlet extends javax.servlet.http.HttpServlet {
                     break;
 
                 case "/nol":
-                    SimpleDateFormat format = new SimpleDateFormat("dd/MM/yy");
-                    java.util.Date ds=null;
-                    java.util.Date de=null;
+                    //ottengo la data di inizio di QUEL noleggio
+                    stmt = conn.prepareStatement("SELECT data_start FROM noleggi WHERE id_tess_fk=? AND tag_fk=? AND data_end=?;");
+                    stmt.setString(1,id_tess);
+                    stmt.setString(2,tag);
+                    stmt.setNull(3,Types.NULL);
 
-                    int sec_cred = 0;
-                    //int sec_cred = data_end - data_start [in secondi]
-                    try {
-                        ds = format.parse(data_start);
-                        de = (java.util.Date) format.parse(String.valueOf(data_end));
-                    } catch (ParseException e) {
-                        e.printStackTrace();
-                    }
+                    ResultSet rs = stmt.executeQuery();//recupero la data
 
+                    java.sql.Date dbSqlDate = rs.getDate("data_start");
+                    java.util.Date data_start = new java.util.Date(dbSqlDate.getTime());
 
-                    sec_cred = Math.toIntExact((ds.getTime() - de.getTime()) / 1000);
+                    sec_cred = Math.toIntExact((data_start.getTime() - data_end.getTime()) / 1000);
 
-
-                    stmt = conn.prepareStatement("UPDATE `noleggi` SET `sec_cred`=?,`data_end`=? WHERE `id_tess_fk`=?;");
-
+                    //aggiorno i secondi di credito dell'utente
+                    stmt = conn.prepareStatement("UPDATE `utenti` SET `sec_cred`=? WHERE `id_tess_fk`=?;");
                     stmt.setInt(1,sec_cred);
-                    stmt.setString(2, String.valueOf(data_end));
-                    stmt.setString(3,id_tess);
+                    stmt.setString(2,id_tess);
+                    stmt.executeUpdate();
 
+                    //converto date_end da util.date a sql.date
+                    java.sql.Date sql_data_end = new java.sql.Date(data_end.getTime());
+
+                    //aggiorno la tupla del noleggio in questione
+                    stmt = conn.prepareStatement("UPDATE noleggi SET data_end=? WHERE id_tess_fk=? AND tag_fk=? AND data_end=?;");
+                    stmt.setDate(1,sql_data_end);
+                    stmt.setString(2,id_tess);
+                    stmt.setString(3,tag);
+                    stmt.setNull(4,Types.NULL);
                     value = stmt.executeUpdate();
 
                     if(value!=0)
                     {
-                        response.setStatus(200);
+                        jsonObject.put("response_code",201);
+                        jsonArray.put(jsonObject);
+
                     }else
                     {
-                        response.setStatus(400);
+                        jsonObject.put("response_code",400);
+                        jsonArray.put(jsonObject);
                     }
+
+                    response.getWriter().println(jsonArray);
 
                     stmt.close();
                     conn.close();
@@ -551,7 +613,7 @@ public class Servlet extends javax.servlet.http.HttpServlet {
 
 
 
-        } catch (SQLException | ParseException e) {
+        } catch (SQLException | ParseException | JSONException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
@@ -603,18 +665,20 @@ public class Servlet extends javax.servlet.http.HttpServlet {
                     stmt = conn.prepareStatement("DELETE FROM bici WHERE tag=?;");
                     stmt.setString(1,tag);
 
-                    int righe_cancellate = stmt.executeUpdate();
+                    int value = stmt.executeUpdate();
 
-                    if(righe_cancellate!=0)
+                    if(value!=0)
                     {
-                        response.getWriter().println("Cancellazione avvenuta correttamente. Righe cancellate: " + righe_cancellate);
-                        //JSON RESPONSE CODE
+                        jsonObject.put("response_code",201);
+                        jsonArray.put(jsonObject);
 
                     }else
                     {
-                        response.getWriter().println("Cancellazione non avvenuta");
-                        //JSON RESPONSE CODE
+                        jsonObject.put("response_code",400);
+                        jsonArray.put(jsonObject);
                     }
+
+                    response.getWriter().println(jsonArray);
 
                     stmt.close();
                     conn.close();
@@ -624,19 +688,20 @@ public class Servlet extends javax.servlet.http.HttpServlet {
                     stmt = conn.prepareStatement("DELETE FROM utenti WHERE id_tess=?;");
                     stmt.setString(1,id_tess);
 
-                    righe_cancellate = stmt.executeUpdate();
+                    value = stmt.executeUpdate();
 
-                    if(righe_cancellate!=0)
+                    if(value!=0)
                     {
-                        response.getWriter().println("Cancellazione avvenuta correttamente. Righe cancellate: " + righe_cancellate);
-                        //JSON RESPONSE CODE
+                        jsonObject.put("response_code",201);
+                        jsonArray.put(jsonObject);
 
                     }else
                     {
-                        response.getWriter().println("Cancellazione non avvenuta");
-                        //JSON RESPONSE CODE
+                        jsonObject.put("response_code",400);
+                        jsonArray.put(jsonObject);
                     }
 
+                    response.getWriter().println(jsonArray);
                     stmt.close();
                     conn.close();
                     break;
@@ -644,7 +709,7 @@ public class Servlet extends javax.servlet.http.HttpServlet {
             }
 
 
-        } catch (SQLException e) {
+        } catch (SQLException | JSONException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }

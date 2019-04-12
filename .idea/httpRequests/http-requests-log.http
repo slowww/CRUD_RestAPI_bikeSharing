@@ -1,3 +1,79 @@
+POST http://localhost:8080/nol?id_tess=aaabbb&data_start=12/04/19&tag=abc123&data_end=null
+Accept: */*
+Cache-Control: no-cache
+
+###
+
+POST http://localhost:8080/nol?id_tess=aaabbb&data_start=12/04/19&tag=abc123
+Accept: */*
+Cache-Control: no-cache
+
+###
+
+POST http://localhost:8080/staz?id_staz=3423&disp=true&ndisp=true&ind_staz=via maj
+Accept: */*
+Cache-Control: no-cache
+
+<> 2019-04-12T093915.200.json
+
+###
+
+POST http://localhost:8080/staz?id_staz=3423&disp=true&ndisp=true&ind_staz=via maj
+Accept: */*
+Cache-Control: no-cache
+
+###
+
+POST http://localhost:8080/staz?id_staz=11122&disp=true&ndisp=true&ind_staz=via maj
+Accept: */*
+Cache-Control: no-cache
+
+###
+
+POST http://localhost:8080/staz?id_staz=11122&disp=true&ndisp=true&ind_staz=viale italia
+Accept: */*
+Cache-Control: no-cache
+
+###
+
+POST http://localhost:8080/staz?id_staz=111222333&disp=true&ndisp=true&ind_staz=viale italia
+Accept: */*
+Cache-Control: no-cache
+
+<> 2019-04-12T092642.200.json
+
+###
+
+POST http://localhost:8080/utente?id_tess=aaabbb&nome=Dario&cogn=Iosca&ind=via zenale, treviglio&mail=dario@gmail.com&sec_cred=0&pwd=password
+Accept: */*
+Cache-Control: no-cache
+
+###
+
+POST http://localhost:8080/utente?id_tess=aaabbb&nome=Dario&cogn=Iosca&ind=via zenale, treviglio&mail=dario@gmail.com&sec_cred=0&pwd=password
+Accept: */*
+Cache-Control: no-cache
+
+###
+
+POST http://localhost:8080/nol?id_tess=aaabbb&data_start=12/04/19&tag=abc123
+Accept: */*
+Cache-Control: no-cache
+
+###
+
+POST http://localhost:8080/nol?id_tess=aaabbb&data_start=12/04/19&tag=abc123
+Accept: */*
+Cache-Control: no-cache
+
+###
+
+POST http://localhost:8080/bike?tag=abc123&stato=funzionante
+Accept: */*
+Cache-Control: no-cache
+
+###
+
 GET http://localhost:8080/
 Accept: */*
 Cache-Control: no-cache
