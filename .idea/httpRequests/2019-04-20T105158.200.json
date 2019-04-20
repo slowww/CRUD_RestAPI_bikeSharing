@@ -1,0 +1,42 @@
+[
+  {
+    "mail": "mario@mail.it",
+    "id_tess": "999",
+    "sec_cred": 0,
+    "nome": "mario",
+    "pwd": "mariopwd",
+    "cogn": "rossi",
+    "Response code": 200,
+    "ind": "viale roma,66"
+  },
+  {
+    "mail": "mario@mail.it",
+    "id_tess": "999",
+    "sec_cred": 0,
+    "nome": "mario",
+    "pwd": "mariopwd",
+    "cogn": "rossi",
+    "Response code": 200,
+    "ind": "viale roma,66"
+  },
+  {
+    "mail": "mario@mail.it",
+    "id_tess": "999",
+    "sec_cred": 0,
+    "nome": "mario",
+    "pwd": "mariopwd",
+    "cogn": "rossi",
+    "Response code": 200,
+    "ind": "viale roma,66"
+  },
+  {
+    "mail": "mario@mail.it",
+    "id_tess": "999",
+    "sec_cred": 0,
+    "nome": "mario",
+    "pwd": "mariopwd",
+    "cogn": "rossi",
+    "Response code": 200,
+    "ind": "viale roma,66"
+  }
+]

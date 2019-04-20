@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.sql.*;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Enumeration;
 
 public class Servlet extends javax.servlet.http.HttpServlet {
@@ -24,17 +25,19 @@ public class Servlet extends javax.servlet.http.HttpServlet {
     boolean disp;
     boolean ndisp;
     String ind_staz="";
-    java.util.Date data_start;
-    java.util.Date data_end=null;
+    //java.util.Date data_start;
+    String data_end="";
 
-    JSONObject jsonObject = new JSONObject();
-    JSONArray jsonArray = new JSONArray();
+
 
 
     @SuppressWarnings("Duplicates")
     protected void doPost(javax.servlet.http.HttpServletRequest request, javax.servlet.http.HttpServletResponse response) throws javax.servlet.ServletException, IOException {
 
+        JSONObject jsonObject = new JSONObject();
+        JSONArray jsonArray = new JSONArray();
         response.setContentType("application/json");
+
 
         try {
             MariaDbDataSource dataSource = new MariaDbDataSource();
@@ -135,7 +138,7 @@ public class Servlet extends javax.servlet.http.HttpServlet {
                         break;
                     case "data_end":
                         if (paramValue != null) {
-                            data_end = new SimpleDateFormat("dd/MM/yy").parse(paramValue);
+                            data_end = paramValue;
                         }
                         break;*/
                 }
@@ -237,15 +240,9 @@ public class Servlet extends javax.servlet.http.HttpServlet {
                     conn.close();
                     break;
                 case "/nol":
-                    //java.sql.Date sql_data_start = new java.sql.Date(data_start.getTime());
-                    stmt = conn.prepareStatement("INSERT INTO `noleggi`(`id_tess`, `data_start`, `data_end`,`tag`) VALUES (?,?,?,?);");
+                    stmt = conn.prepareStatement("INSERT INTO `noleggi`(`id_tess_fk`, `tag_fk`) VALUES (?,?);");
                     stmt.setString(1,id_tess);
-
-                    //non metterli!
-                    stmt.setNull(2,Types.NULL);//SU MYSQL IL CAMPO DEVE POTER PERMETTERE IL NULL
-                    stmt.setNull(3, Types.NULL);//SU MYSQL IL CAMPO DEVE POTER PERMETTERE IL NULL
-
-                    stmt.setString(4,tag);
+                    stmt.setString(2,tag);
 
                     value = stmt.executeUpdate();
 
@@ -266,10 +263,10 @@ public class Servlet extends javax.servlet.http.HttpServlet {
                     conn.close();
                     break;
                 case "/park":
-                    stmt = conn.prepareStatement("INSERT INTO `parcheggi`(`tag`,`data_park`,`id_staz`) VALUES (?,?,?);");
+                    stmt = conn.prepareStatement("INSERT INTO `parcheggi`(`tag_fk`,`id_staz_fk`) VALUES(?,?);");
                     stmt.setString(1,tag);
-                    stmt.setNull(2, Types.NULL);//OK? sulla tabella verrà valorizzato il campo con un timestamp automatico (settare TIMESTAMP - CURRENT TIMESTAMP)
-                    stmt.setString(3,id_staz);
+                    //stmt.setNull(2, Types.NULL);//OK? sulla tabella verrà valorizzato il campo con un timestamp automatico (settare TIMESTAMP - CURRENT TIMESTAMP)
+                    stmt.setString(2,id_staz);
 
                     value = stmt.executeUpdate();
 
@@ -293,7 +290,7 @@ public class Servlet extends javax.servlet.http.HttpServlet {
 
 
 
-        } catch (SQLException | ParseException | JSONException e) {
+        } catch (SQLException | JSONException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
@@ -319,45 +316,127 @@ public class Servlet extends javax.servlet.http.HttpServlet {
             dataSource.setPassword("");
 
             Connection conn = dataSource.getConnection();
-            Statement stmt = conn.createStatement();
-            ResultSet rs = stmt.executeQuery("SELECT * FROM utenti");
+
+            ResultSet rs;
+            response.setContentType("application/json");
+            JSONArray jsonArray = new JSONArray();
+            JSONObject jsonObject = new JSONObject();//creo oggetto per contenere il json
+
+
             /*A ResultSet is a Java object that contains the results of executing an SQL query. In other words, it contains the rows that satisfy the conditions of the query.
              * The data stored in a ResultSet object is retrieved through a set of get methods that allows access to the various columns of the current row.*/
 
-            response.setContentType("application/json");
+
+            Enumeration<String> parameterNames = request.getParameterNames();//SET DEI POSSIBILI VALORI DELLA REQUEST (nel nostro caso: isbn - titolo - autore - casaed)
+            String paramValue;
+            String paramName;
 
 
-            JSONArray jsonArray = new JSONArray();
+            while(parameterNames.hasMoreElements())
+            {
+                paramName = parameterNames.nextElement();
+                paramValue = request.getParameter(paramName);//ottengo il valore del parametro che ha nome *paramName*
+
+                switch (paramName)
+                {
+                    case "id_tess":
+                        if (paramValue != null)
+                        {
+                            id_tess = paramValue;
+                        }
+                        break;
+                    case "pwd":
+                        if (paramValue != null)
+                        {
+                            pwd = paramValue;
+                        }
+                        break;
+
+                }//end switch
+            }//end while
+
+                if(request.getRequestURI().equalsIgnoreCase("/utente"))
+                {
+                        if(id_tess.isEmpty()&&pwd.isEmpty())//se id_tess e pwd non sono stati specificati è un get generico (lista di tutti gli utenti in json)
+                        {
+                            try
+                            {
+                                Statement stmt = conn.createStatement();
+                                rs = stmt.executeQuery("SELECT * FROM utenti"); //MOSTRA RISULTATO DELLA QUERY
+                                while (rs.next())
+                                {
+                                    ResultSetMetaData metaData = rs.getMetaData();//ottengo nomi colonne tabella
+
+                                    count = metaData.getColumnCount();//conto le colonne
 
 
-            while (rs.next()) {
-                ResultSetMetaData metaData = rs.getMetaData();//ottengo nomi colonne tabella
+                                    for (i = 1; i <= count; i++)
+                                    {
 
-                count = metaData.getColumnCount();//conto le colonne
+                                        try
+                                        {
+                                            jsonObject.put(metaData.getColumnName(i), rs.getObject(i));//inserisco key e value nel jsonobject
+                                        } catch (JSONException e)
+                                        {
+                                            e.printStackTrace();
+                                        }
+                                    }
+                                    try
+                                    {
+                                        jsonObject.put("Response code", 200);
+                                    } catch (JSONException e)
+                                    {
+                                        e.printStackTrace();
+                                    }
+                                    jsonArray.put(jsonObject);//metto il jsonobject nell'apposito array
+                                }
+                                response.getWriter().println(jsonArray);//stampo
 
-                JSONObject jsonObject = new JSONObject();//creo oggetto per contenere il json
-                for (i = 1; i <= count; i++) {
 
-                    try {
-                        jsonObject.put(metaData.getColumnName(i), rs.getObject(i));//inserisco key e value nel jsonobject
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
+                                stmt.close();
+                                conn.close();
+                            }catch (SQLException e){e.printStackTrace();}
+                        }else{//se id_tess e pwd sono stati specificati (login)
+                            try
+                            {
+                                PreparedStatement stmt;
+                                stmt = conn.prepareStatement("SELECT * FROM `utenti` WHERE id_tess=? AND pwd=?;");
+                                stmt.setString(1, id_tess);
+                                stmt.setString(2, pwd);
+
+                                rs = stmt.executeQuery();
+
+                                if (rs.isBeforeFirst())
+                                {
+                                    try
+                                    {
+                                        jsonObject.put("response_code", 201);
+                                    } catch (JSONException e)
+                                    {
+                                        e.printStackTrace();
+                                    }
+                                    jsonArray.put(jsonObject);
+
+                                } else
+                                {
+                                    try
+                                    {
+                                        jsonObject.put("response_code", 400);
+                                    } catch (JSONException e)
+                                    {
+                                        e.printStackTrace();
+                                    }
+                                    jsonArray.put(jsonObject);
+                                }
+
+
+                                response.getWriter().println(jsonArray);
+                                stmt.close();
+                                conn.close();
+                            }catch (SQLException e){e.printStackTrace();}
+                        }
+
                 }
-                try {
-                    jsonObject.put("Status", response.SC_OK); //OK?????????
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-                jsonArray.put(jsonObject);//metto il jsonobject in un apposito array
-            }
-
-
-            response.getWriter().println(jsonArray);//stampo
-
-
-            stmt.close();
-            conn.close();
         } catch (SQLException e) {
             response.getWriter().println("Errore SQL");
             e.printStackTrace();
@@ -365,6 +444,7 @@ public class Servlet extends javax.servlet.http.HttpServlet {
         } catch (IOException e) {
             System.out.println("Errore IO");
         }
+
 
     }
 
@@ -382,6 +462,8 @@ public class Servlet extends javax.servlet.http.HttpServlet {
         String new_pwd="";
         Boolean new_disp=false;
         Boolean new_ndisp=false;
+        JSONObject jsonObject = new JSONObject();
+        JSONArray jsonArray = new JSONArray();
 
 
         response.setContentType("application/json");
@@ -427,7 +509,7 @@ public class Servlet extends javax.servlet.http.HttpServlet {
                     //nuovi valori
                     case "data_end":
                         if(paramValue!= null) {
-                            data_end = new SimpleDateFormat("dd/MM/yyyy").parse(paramValue);
+                            data_end = paramValue;
                         }break;
                     case "new_tag":
                         if(paramValue!= null) {
@@ -562,50 +644,83 @@ public class Servlet extends javax.servlet.http.HttpServlet {
                     break;
 
                 case "/nol":
-                    //ottengo la data di inizio di QUEL noleggio
-                    stmt = conn.prepareStatement("SELECT data_start FROM noleggi WHERE id_tess_fk=? AND tag_fk=? AND data_end=?;");
-                    stmt.setString(1,id_tess);
-                    stmt.setString(2,tag);
-                    stmt.setNull(3,Types.NULL);
+                    java.util.Date data_start;
+                    int sec_used=0;
+                    try {//trasformo date_end da stringa a timestamp
+                        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");//specifico il formato
+                        Date parsedDate = dateFormat.parse(data_end);//trasformo data_end in quel formato
+                        Timestamp data_end_ts = new java.sql.Timestamp(parsedDate.getTime());//trasformo la data, in quel formato, in timestamp
 
-                    ResultSet rs = stmt.executeQuery();//recupero la data
+                        //ottengo la data di inizio di QUEL noleggio
+                        stmt = conn.prepareStatement("SELECT data_start FROM noleggi WHERE id_tess_fk=? AND tag_fk=? AND data_end IS NULL ;");
+                        stmt.setString(1,id_tess);
+                        stmt.setString(2,tag);
 
-                    java.sql.Date dbSqlDate = rs.getDate("data_start");
-                    java.util.Date data_start = new java.util.Date(dbSqlDate.getTime());
-
-                    sec_cred = Math.toIntExact((data_start.getTime() - data_end.getTime()) / 1000);
-
-                    //aggiorno i secondi di credito dell'utente
-                    stmt = conn.prepareStatement("UPDATE `utenti` SET `sec_cred`=? WHERE `id_tess_fk`=?;");
-                    stmt.setInt(1,sec_cred);
-                    stmt.setString(2,id_tess);
-                    stmt.executeUpdate();
-
-                    //converto date_end da util.date a sql.date
-                    java.sql.Date sql_data_end = new java.sql.Date(data_end.getTime());
-
-                    //aggiorno la tupla del noleggio in questione
-                    stmt = conn.prepareStatement("UPDATE noleggi SET data_end=? WHERE id_tess_fk=? AND tag_fk=? AND data_end=?;");
-                    stmt.setDate(1,sql_data_end);
-                    stmt.setString(2,id_tess);
-                    stmt.setString(3,tag);
-                    stmt.setNull(4,Types.NULL);
-                    value = stmt.executeUpdate();
-
-                    if(value!=0)
+                        //recupero la data dal result set
+                    ResultSet rs= stmt.executeQuery();
+                    while(rs.next())
                     {
-                        jsonObject.put("response_code",201);
-                        jsonArray.put(jsonObject);
+                        data_start = rs.getTimestamp("data_start");//data_start !
 
-                    }else
-                    {
-                        jsonObject.put("response_code",400);
-                        jsonArray.put(jsonObject);
+                        response.getWriter().println(data_start);//debug
+
+                        //calcolo i secondi consumati
+                        long diff_ts = data_end_ts.getTime() - data_start.getTime();//differenza tra timestamps in millisecondi
+                        sec_used = (int) diff_ts / 1000;//trasformo in secondi (secondi usati)
+
+                        response.getWriter().println(sec_used);//debug
                     }
 
-                    response.getWriter().println(jsonArray);
+                        //ottengo i secondi di credito dell'utente
+                        stmt = conn.prepareStatement("SELECT sec_cred FROM utenti WHERE id_tess=?;");
+                        stmt.setString(1, id_tess);
 
-                    stmt.close();
+                        rs = stmt.executeQuery();
+
+                        while(rs.next())
+                        {
+                            sec_cred = rs.getInt("sec_cred");//recupero sec_cred dell'utente NOTA: RECUPERA "0" !!!!!
+                        }
+
+                        //sottraggo i secondi consumati da quelli residui dell'utente
+                        sec_cred -= sec_used;
+
+                        response.getWriter().println(sec_cred);//debug
+
+                        //aggiorno i secondi di credito dell'utente
+                        stmt = conn.prepareStatement("UPDATE `utenti` SET `sec_cred`=? WHERE `id_tess`=?;");
+                        stmt.setInt(1, sec_cred);
+                        stmt.setString(2, id_tess);
+                        stmt.executeUpdate();
+
+                        //aggiorno la tupla del noleggio in questione
+                        stmt = conn.prepareStatement("UPDATE noleggi SET data_end=? WHERE id_tess_fk=? AND tag_fk=? AND data_end IS NULL");
+                        stmt.setTimestamp(1, data_end_ts);// FORMATO CORRETTO e.g. 'yyyy-MM-dd 14:29:36'
+                        stmt.setString(2, id_tess);
+                        stmt.setString(3, tag);
+                        //stmt.setNull(4,Types.NULL);
+                        value = stmt.executeUpdate();
+
+                        if (value != 0)
+                        {
+                            jsonObject.put("response_code", 201);
+                            jsonArray.put(jsonObject);
+
+                        } else
+                        {
+                            jsonObject.put("response_code", 400);
+                            jsonArray.put(jsonObject);
+                        }
+
+                        response.getWriter().println(jsonArray);
+
+                        stmt.close();
+
+                    } catch (SQLException e)
+                    {
+                        e.printStackTrace();
+                    }
+
                     conn.close();
                     break;
                     
@@ -623,6 +738,9 @@ public class Servlet extends javax.servlet.http.HttpServlet {
     protected void doDelete(javax.servlet.http.HttpServletRequest request, javax.servlet.http.HttpServletResponse response) throws javax.servlet.ServletException, IOException {
 
         String tag="";
+        String id_tess="";
+        JSONObject jsonObject = new JSONObject();
+        JSONArray jsonArray = new JSONArray();
 
         try {
 
@@ -640,24 +758,30 @@ public class Servlet extends javax.servlet.http.HttpServlet {
             String paramName;
             String paramValue;
 
-            //while (parameterNames.hasMoreElements()) {
+            while(parameterNames.hasMoreElements()) {
 
-            paramName = parameterNames.nextElement();
+                paramName = parameterNames.nextElement();
+                paramValue = request.getParameter(paramName);//ottengo il valore del parametro che ha nome *paramName*
 
-            paramValue = request.getParameter(paramName);//ottengo il valore del parametro che ha nome *paramName*
-
-            if (paramName.equalsIgnoreCase("tag") && paramValue != null) {
-                //cancella la tupla con il seguente tag:
-                tag = paramValue;
-            }else if (paramName.equalsIgnoreCase("id_tess") && paramValue != null)
-            {
-                id_tess = paramValue;
-            }
-
-        //} WHILE BRACE
+                switch(paramName)
+                {
+                    case "tag":
+                        if (paramValue != null)
+                        {
+                            tag = paramValue;
+                        }
+                        break;
+                    case "id_tess":
+                        if (paramValue != null)
+                        {
+                            id_tess = paramValue;
+                        }
+                        break;
+                }
+        }
 
             //debug
-            response.getWriter().println(tag); response.getWriter().println(id_tess);
+            //response.getWriter().println(tag); response.getWriter().println(id_tess);
 
             switch (request.getRequestURI())
             {
@@ -667,6 +791,7 @@ public class Servlet extends javax.servlet.http.HttpServlet {
 
                     int value = stmt.executeUpdate();
 
+                    //funziona ma non esce il response code
                     if(value!=0)
                     {
                         jsonObject.put("response_code",201);
@@ -678,7 +803,7 @@ public class Servlet extends javax.servlet.http.HttpServlet {
                         jsonArray.put(jsonObject);
                     }
 
-                    response.getWriter().println(jsonArray);
+                    //response.getWriter().println(jsonArray);
 
                     stmt.close();
                     conn.close();
@@ -690,6 +815,7 @@ public class Servlet extends javax.servlet.http.HttpServlet {
 
                     value = stmt.executeUpdate();
 
+                    //funziona ma non ritorna il response code!
                     if(value!=0)
                     {
                         jsonObject.put("response_code",201);
@@ -701,7 +827,7 @@ public class Servlet extends javax.servlet.http.HttpServlet {
                         jsonArray.put(jsonObject);
                     }
 
-                    response.getWriter().println(jsonArray);
+                    //response.getWriter().println(jsonArray);
                     stmt.close();
                     conn.close();
                     break;
