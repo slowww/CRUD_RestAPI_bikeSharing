@@ -9,6 +9,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Enumeration;
+import java.util.Iterator;
 
 public class Servlet extends javax.servlet.http.HttpServlet {
 
@@ -305,7 +306,7 @@ public class Servlet extends javax.servlet.http.HttpServlet {
     protected void doGet(javax.servlet.http.HttpServletRequest request, javax.servlet.http.HttpServletResponse response) throws javax.servlet.ServletException, IOException {
     //PER AUTENTICAZIONE LOGIN
         int count;
-        int i;
+
 
         try {
 
@@ -320,7 +321,7 @@ public class Servlet extends javax.servlet.http.HttpServlet {
             ResultSet rs;
             response.setContentType("application/json");
             JSONArray jsonArray = new JSONArray();
-            JSONObject jsonObject = new JSONObject();//creo oggetto per contenere il json
+
 
 
             /*A ResultSet is a Java object that contains the results of executing an SQL query. In other words, it contains the rows that satisfy the conditions of the query.
@@ -351,48 +352,55 @@ public class Servlet extends javax.servlet.http.HttpServlet {
                             pwd = paramValue;
                         }
                         break;
+                    case "id_staz":
+                        if (paramValue != null)
+                        {
+                            id_staz = paramValue;
+                        }
+                        break;
 
                 }//end switch
             }//end while
 
-                if(request.getRequestURI().equalsIgnoreCase("/utente"))
+                switch(request.getRequestURI())
                 {
+                    case "/utente":
                         if(id_tess.isEmpty()&&pwd.isEmpty())//se id_tess e pwd non sono stati specificati è un get generico (lista di tutti gli utenti in json)
                         {
                             try
                             {
                                 Statement stmt = conn.createStatement();
                                 rs = stmt.executeQuery("SELECT * FROM utenti"); //MOSTRA RISULTATO DELLA QUERY
-                                while (rs.next())
+                                //int i=0;
+                                try
                                 {
-                                    ResultSetMetaData metaData = rs.getMetaData();//ottengo nomi colonne tabella
-
-                                    count = metaData.getColumnCount();//conto le colonne
-
-
-                                    for (i = 1; i <= count; i++)
+                                    while (rs.next())
                                     {
-
-                                        try
+                                        ResultSetMetaData metaData = rs.getMetaData();//ottengo nomi colonne tabella
+                                        count = metaData.getColumnCount();//conto le colonne
+                                        JSONObject jsonObject = new JSONObject();
+                                        for (int a = 1; a<= count; a++)//CREO L'OGGETTO (un singolo utente)
                                         {
-                                            jsonObject.put(metaData.getColumnName(i), rs.getObject(i));//inserisco key e value nel jsonobject
-                                        } catch (JSONException e)
-                                        {
-                                            e.printStackTrace();
+                                            try
+                                            {
+                                                jsonObject.put(metaData.getColumnName(a), rs.getObject(a));//inserisco key e value nel jsonobject
+                                            } catch (JSONException e)
+                                            {
+                                                e.printStackTrace();
+                                            }
                                         }
-                                    }
-                                    try
-                                    {
-                                        jsonObject.put("Response code", 200);
-                                    } catch (JSONException e)
-                                    {
-                                        e.printStackTrace();
-                                    }
-                                    jsonArray.put(jsonObject);//metto il jsonobject nell'apposito array
+
+                                        jsonArray.put(jsonObject);//metto l'oggetto creato nell'array
+
+                                        //i++;
+
+                                    }//end while
+                                }finally
+                                {
+                                    rs.close();
                                 }
+
                                 response.getWriter().println(jsonArray);//stampo
-
-
                                 stmt.close();
                                 conn.close();
                             }catch (SQLException e){e.printStackTrace();}
@@ -400,13 +408,14 @@ public class Servlet extends javax.servlet.http.HttpServlet {
                             try
                             {
                                 PreparedStatement stmt;
+                                JSONObject jsonObject = new JSONObject();
                                 stmt = conn.prepareStatement("SELECT * FROM `utenti` WHERE id_tess=? AND pwd=?;");
                                 stmt.setString(1, id_tess);
                                 stmt.setString(2, pwd);
 
                                 rs = stmt.executeQuery();
 
-                                if (rs.isBeforeFirst())
+                                if (rs.isBeforeFirst())//controllo che nel resultset sia contenuto qualcosa
                                 {
                                     try
                                     {
@@ -435,8 +444,97 @@ public class Servlet extends javax.servlet.http.HttpServlet {
                                 conn.close();
                             }catch (SQLException e){e.printStackTrace();}
                         }
+                        break;
 
-                }
+                    case "/nol"://ritorna tutti i noleggi di un utente dato l'id della sua tessera
+                        try
+                        {
+                            PreparedStatement stmt = conn.prepareStatement("SELECT tag_fk, data_start, data_end FROM noleggi WHERE id_tess_fk=?;");
+                            stmt.setString(1,id_tess);
+                            ResultSet rset = stmt.executeQuery();
+
+                            try
+                            {
+                                while (rset.next())
+                                {
+                                    ResultSetMetaData metaData = rset.getMetaData();//ottengo nomi colonne tabella
+                                    count = metaData.getColumnCount();//conto le colonne
+                                    JSONObject jsonObject = new JSONObject();
+                                    for (int a = 1; a<= count; a++)//CREO L'OGGETTO (un singolo utente)
+                                    {
+                                        try
+                                        {
+                                            jsonObject.put(metaData.getColumnName(a), rset.getObject(a));//inserisco key e value nel jsonobject
+                                        } catch (JSONException e)
+                                        {
+                                            e.printStackTrace();
+                                        }
+                                    }
+
+                                    jsonArray.put(jsonObject);
+
+
+                                }//end while
+                            }finally
+                            {
+                                rset.close();
+                            }
+
+                            response.getWriter().println(jsonArray);//stampo
+                            stmt.close();
+                            conn.close();
+                        }catch (SQLException e){e.printStackTrace();}
+                        break;
+
+                    case "/staz":
+                        /* DISP/NDISP
+                         * 1/1 stazione piena a metà
+                         * 1/0 stazione vuota
+                         * false/true stazione piena
+                         * false/false impossibile (chiusa?) */
+                        try
+                        {
+                            PreparedStatement stmt = conn.prepareStatement("SELECT disp,ndisp FROM stazioni where id_staz=?");
+                            stmt.setString(1,id_staz);
+                            ResultSet rset = stmt.executeQuery();
+
+                            try
+                            {
+                                while (rset.next())
+                                {
+                                    ResultSetMetaData metaData = rset.getMetaData();//ottengo nomi colonne tabella
+                                    count = metaData.getColumnCount();//conto le colonne
+                                    JSONObject jsonObject = new JSONObject();
+                                    for (int a = 1; a<= count; a++)//CREO L'OGGETTO (un singolo utente)
+                                    {
+                                        try
+                                        {
+                                            jsonObject.put(metaData.getColumnName(a), rset.getObject(a));//inserisco key e value nel jsonobject
+                                        } catch (JSONException e)
+                                        {
+                                            e.printStackTrace();
+                                        }
+                                    }
+
+                                    jsonArray.put(jsonObject);
+
+
+                                }//end while
+                            }finally
+                            {
+                                rset.close();
+                            }
+
+                            response.getWriter().println(jsonArray);//stampo
+                            stmt.close();
+                            conn.close();
+                        }catch (SQLException e){e.printStackTrace();}
+                        break;
+
+
+
+
+            }
         } catch (SQLException e) {
             response.getWriter().println("Errore SQL");
             e.printStackTrace();
@@ -444,7 +542,6 @@ public class Servlet extends javax.servlet.http.HttpServlet {
         } catch (IOException e) {
             System.out.println("Errore IO");
         }
-
 
     }
 
@@ -562,7 +659,10 @@ public class Servlet extends javax.servlet.http.HttpServlet {
                 case "/bike":
                     stmt = conn.prepareStatement("UPDATE `bici` SET `tag`=?,`stato`=? WHERE `tag`=?;");
 
-                    stmt.setString(1,new_tag);
+                    if(new_tag!="")//come fare???
+                    {
+                        stmt.setString(1, new_tag);
+                    }
                     stmt.setString(2,new_stato);
                     stmt.setString(3,tag);
 
@@ -588,7 +688,7 @@ public class Servlet extends javax.servlet.http.HttpServlet {
 
                 case "/utente":
 
-                    stmt = conn.prepareStatement("UPDATE `utenti` SET `nome`=?,`cogn`=?`ind`=?,`mail`=?`pwd`=? WHERE `id_tess`=?;");
+                    stmt = conn.prepareStatement("UPDATE `utenti` SET `nome`=?,`cogn`=?,`ind`=?,`mail`=?,`pwd`=? WHERE `id_tess`=?;");
 
                     stmt.setString(1,new_nome);
                     stmt.setString(2,new_cogn);
@@ -693,6 +793,12 @@ public class Servlet extends javax.servlet.http.HttpServlet {
                         stmt.setString(2, id_tess);
                         stmt.executeUpdate();
 
+                        //segnalo dove è stata lasciata parcheggiata la bicicletta
+                        stmt = conn.prepareStatement("INSERT INTO `parcheggi`(`tag_fk`, `id_staz_fk`) VALUES (?,?)");
+                        stmt.setString(1,tag);
+                        stmt.setString(2,id_staz);
+                        stmt.executeUpdate();
+
                         //aggiorno la tupla del noleggio in questione
                         stmt = conn.prepareStatement("UPDATE noleggi SET data_end=? WHERE id_tess_fk=? AND tag_fk=? AND data_end IS NULL");
                         stmt.setTimestamp(1, data_end_ts);// FORMATO CORRETTO e.g. 'yyyy-MM-dd 14:29:36'
@@ -741,6 +847,7 @@ public class Servlet extends javax.servlet.http.HttpServlet {
         String id_tess="";
         JSONObject jsonObject = new JSONObject();
         JSONArray jsonArray = new JSONArray();
+        PreparedStatement stmt;
 
         try {
 
@@ -749,7 +856,7 @@ public class Servlet extends javax.servlet.http.HttpServlet {
             dataSource.setDatabaseName("bike_db");
             dataSource.setUser("root");
             dataSource.setPassword("");
-            PreparedStatement stmt;
+
             Connection conn;
             conn = dataSource.getConnection();
             response.setContentType("application/json");
@@ -786,6 +893,7 @@ public class Servlet extends javax.servlet.http.HttpServlet {
             switch (request.getRequestURI())
             {
                 case "/bike":
+                    //non sarà possibile cancellare una bici che è impegnata in un noleggio o un parcheggio (foreign key constraint)
                     stmt = conn.prepareStatement("DELETE FROM bici WHERE tag=?;");
                     stmt.setString(1,tag);
 
@@ -803,13 +911,14 @@ public class Servlet extends javax.servlet.http.HttpServlet {
                         jsonArray.put(jsonObject);
                     }
 
-                    //response.getWriter().println(jsonArray);
+                    response.getWriter().println(jsonArray);
 
                     stmt.close();
                     conn.close();
                     break;
 
                 case "/utente":
+
                     stmt = conn.prepareStatement("DELETE FROM utenti WHERE id_tess=?;");
                     stmt.setString(1,id_tess);
 
@@ -827,7 +936,7 @@ public class Servlet extends javax.servlet.http.HttpServlet {
                         jsonArray.put(jsonObject);
                     }
 
-                    //response.getWriter().println(jsonArray);
+                    response.getWriter().println(jsonArray);
                     stmt.close();
                     conn.close();
                     break;

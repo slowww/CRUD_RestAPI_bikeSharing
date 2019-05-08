@@ -1,12 +1,12 @@
 /bike
 POST: tag, stato
-DELETE:tag
+DELETE:tag  
 PUT: tag, new_tag, new_stato (ripetere il valore se invariato)
 
 
 /utente
 POST: id_tess,nome,cogn,ind,mail,sec_cred (sarebbe piu opportuno nell'ordine delle centinaia di migliaia),pwd
-DELETE:id_tess
+DELETE:id_tess //non stampa response code
 PUT: id_tess,new_nome,new_cogn,new_ind,new_mail,new_pwd (ripetere il valore se invariato)
 GET: id_tess, pwd OPPURE NIENTE (lista utenti + dati)
 
@@ -14,11 +14,17 @@ GET: id_tess, pwd OPPURE NIENTE (lista utenti + dati)
 /staz
 POST: id_staz, disp (bool), ndisp (bool), ind_staz
 PUT: id_staz, new_disp, new_ndisp
+GET: id_staz (ottengo la disponibilità di una determinata stazione)
+			* 1/1 stazione piena a metà
+                         * 1/0 stazione vuota
+                         * false/true stazione piena
+                         * false/false impossibile (chiusa?)
 
 
 /nol
 POST: id_tess, data_start (formato: yyyy-MM-dd hh:mm:ss), tag
-PUT: id_tess, tag, data_end (formato: yyyy-MM-dd hh:mm:ss)
+PUT: id_tess, tag, id_staz, data_end (formato: yyyy-MM-dd hh:mm:ss)
+GET: id_tess (ritorna tutti i noleggi di un utente) 
 
 
 /park

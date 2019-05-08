@@ -1,140 +1,76 @@
-PUT http://localhost:8080/nol?id_tess=777&tag=654321&data_end=2019-04-22 16:00:32
+PUT http://localhost:8080/nol?id_tess=666&tag=456789&id_staz=656565&data_end=2019-05-08 17:07:00
 Accept: */*
 Cache-Control: no-cache
 
-<> 2019-04-20T121025.200.json
+<> 2019-05-08T051001.200.json
 
 ###
 
-PUT http://localhost:8080/nol?id_tess=777&tag=654321&data_end=2019-04-22 16:00:32
+PUT http://localhost:8080/nol?id_tess=456789&tag=456789&id_staz=656565&data_end=2019-05-08 17:07:00
 Accept: */*
 Cache-Control: no-cache
 
-<> 2019-04-20T120350.200.json
+<> 2019-05-08T050827.200.json
 
 ###
 
-PUT http://localhost:8080/nol?id_tess=777&tag=654321&data_end=2019-04-22 16:00:32
+PUT http://localhost:8080/bike?new_stato=in riparazione&tag=456789
 Accept: */*
 Cache-Control: no-cache
 
-<> 2019-04-20T115914.200.json
-
 ###
 
-PUT http://localhost:8080/nol?id_tess=777&tag=654321&data_end=2019-04-22 16:00:32
+PUT http://localhost:8080/bike?new_stato=in riparazione&tag=456789
 Accept: */*
 Cache-Control: no-cache
 
-<> 2019-04-20T115504.200.json
-
 ###
 
-PUT http://localhost:8080/nol?id_tess=777&tag=654321&data_end=2019-04-22 16:00:32
+PUT http://localhost:8080/bike?new_stato=funzionante&tag=123456
 Accept: */*
 Cache-Control: no-cache
 
-<> 2019-04-20T115150.200.json
+<> 2019-05-08T041135.200.json
 
 ###
 
-PUT http://localhost:8080/nol?id_tess=777&tag=654321&data_end=2019-22-04 16:00:32
+GET http://localhost:8080/staz?id_staz=3423
 Accept: */*
 Cache-Control: no-cache
 
-<> 2019-04-20T114947.200.json
+<> 2019-05-08T040401.200.json
 
 ###
 
-PUT http://localhost:8080/nol?id_tess=777&tag=654321&data_end=2019-22-04 16:00:32
+GET http://localhost:8080/staz?id_staz=3423
 Accept: */*
 Cache-Control: no-cache
 
-<> 2019-04-20T114645.200.json
+<> 2019-05-08T040135.200.txt
 
 ###
 
-GET http://localhost:8080/utente?id_tess=666&pwd=mypwd
+GET http://localhost:8080/staz?id_staz=3423
 Accept: */*
 Cache-Control: no-cache
 
-<> 2019-04-20T113049.200.json
+<> 2019-04-29T101856.200.json
 
 ###
 
-GET http://localhost:8080/utente?id_tess=545&pwd=mypwd
+DELETE http://localhost:8080/bike?tag=123456
 Accept: */*
 Cache-Control: no-cache
 
-<> 2019-04-20T112942.200.json
-
 ###
 
-GET http://localhost:8080/utente?id_tess=545&pwd=mypwd
+DELETE http://localhost:8080/bike?tag=123456
 Accept: */*
 Cache-Control: no-cache
 
-<> 2019-04-20T112114.200.json
-
 ###
 
-GET http://localhost:8080/utente?id_tess=666&pwd=mypwd
-Accept: */*
-Cache-Control: no-cache
-
-<> 2019-04-20T112005.200.json
-
-###
-
-GET http://localhost:8080/utente?id_tess=666&pwd=mypwd
-Accept: */*
-Cache-Control: no-cache
-
-<> 2019-04-20T111729.200.json
-
-###
-
-GET http://localhost:8080/utente?id_tess=666&pwd=mypwd
-Accept: */*
-Cache-Control: no-cache
-
-<> 2019-04-20T111548.200.json
-
-###
-
-GET http://localhost:8080/utente?id_tess=666&pwd=mypwd
-Accept: */*
-Cache-Control: no-cache
-
-<> 2019-04-20T110024.200.json
-
-###
-
-GET http://localhost:8080/utente?id_tess=666&pwd=mypwd
-Accept: */*
-Cache-Control: no-cache
-
-<> 2019-04-20T105420.200.json
-
-###
-
-GET http://localhost:8080/utente
-Accept: */*
-Cache-Control: no-cache
-
-<> 2019-04-20T105158.200.json
-
-###
-
-GET http://localhost:8080/utente
-Accept: */*
-Cache-Control: no-cache
-
-<> 2019-04-20T105018.200.txt
-
-###
-
-GET http://localhost:8080/
+DELETE http://localhost:8080/bike?tag=123456
 Accept: */*
 Cache-Control: no-cache
 
@@ -144,227 +80,289 @@ GET http://localhost:8080/utente
 Accept: */*
 Cache-Control: no-cache
 
+<> 2019-04-23T055010.200.json
+
 ###
 
-GET http://localhost:8080/utenti
+GET http://localhost:8080/utente
 Accept: */*
 Cache-Control: no-cache
 
 ###
 
-GET http://localhost:8080
+GET http://localhost:8080/utente?id_tess=666&pwd=mypwd
+Accept: */*
+Cache-Control: no-cache
+
+<> 2019-04-23T054742.200.json
+
+###
+
+GET http://localhost:8080/utente
+Accept: */*
+Cache-Control: no-cache
+
+<> 2019-04-23T054542.200.json
+
+###
+
+GET http://localhost:8080/utente?id_tess=666&pwd=mypwd
+Accept: */*
+Cache-Control: no-cache
+
+<> 2019-04-23T054518.200.json
+
+###
+
+GET http://localhost:8080/utente
+Accept: */*
+Cache-Control: no-cache
+
+<> 2019-04-23T053609.200.json
+
+###
+
+POST http://localhost:8080/park?id_staz=3423&tag=987654
+Accept: */*
+Cache-Control: no-cache
+
+<> 2019-04-23T052623.200.json
+
+###
+
+GET http://localhost:8080/nol?id_tess=666
+Accept: */*
+Cache-Control: no-cache
+
+<> 2019-04-23T052443.200.json
+
+###
+
+PUT http://localhost:8080/nol?id_tess=666&data_end=2019-04-23 17:50:00&tag=456789&id_staz=3423
+Accept: */*
+Cache-Control: no-cache
+
+<> 2019-04-23T052316.200.json
+
+###
+
+POST http://localhost:8080/nol?id_tess=666&data_start=2019-04-23 17:20:00&tag=456789
+Accept: */*
+Cache-Control: no-cache
+
+<> 2019-04-23T052047.200.json
+
+###
+
+PUT http://localhost:8080/staz?id_staz=656565&new_disp=true&new_ndisp=true
+Accept: */*
+Cache-Control: no-cache
+
+<> 2019-04-23T051850.200.json
+
+###
+
+POST http://localhost:8080/staz?id_staz=656565&ind_staz=corso italia&disp=true&ndisp=false
+Accept: */*
+Cache-Control: no-cache
+
+<> 2019-04-23T051744.200.json
+
+###
+
+GET http://localhost:8080/utente
+Accept: */*
+Cache-Control: no-cache
+
+<> 2019-04-23T051554.200.json
+
+###
+
+GET http://localhost:8080/utente?id_tess=666
+Accept: */*
+Cache-Control: no-cache
+
+<> 2019-04-23T051515.200.json
+
+###
+
+PUT http://localhost:8080/utente?id_tess=666&new_nome=dario&new_cogn=verdi&new_ind=via zenale,2&new_mail=dario@mail.it&new_pwd=mypwd
+Accept: */*
+Cache-Control: no-cache
+
+<> 2019-04-23T051449.200.json
+
+###
+
+PUT http://localhost:8080/utente?id_tess=666&new_nome=dario&new_cogn=verdi&new_ind=via zenale,2&new_mail=dario@mail.it&new_pwd=mypwd
 Accept: */*
 Cache-Control: no-cache
 
 ###
 
-PUT http://localhost:8080/nol?tag=654321&id_tess=777&data_end=2019-11-05 14:29:36
-Accept: */*
-Cache-Control: no-cache
-
-<> 2019-04-19T064835.200.json
-
-###
-
-PUT http://localhost:8080/nol?tag=654321&id_tess=777&data_end=2019-11-05 14:29:36
+DELETE http://localhost:8080/utente?id_tess=321321
 Accept: */*
 Cache-Control: no-cache
 
 ###
 
-PUT http://localhost:8080/nol?tag=654321&id_tess=777&data_end=2019-11-05 14:29:36
+POST http://localhost:8080/utente?id_tess=321321&nome=silvio&cogn=berlusconi&ind=villa wanda&mail=silvio@forzaitalia.it&sec_cred=850000&pwd=silviopwd
 Accept: */*
 Cache-Control: no-cache
 
-<> 2019-04-19T064527.200.json
+<> 2019-04-23T051006.200.json
 
 ###
 
-PUT http://localhost:8080/nol?tag=654321&id_tess=777&data_end=2019-11-05 14:29:36
-Accept: */*
-Cache-Control: no-cache
-
-<> 2019-04-19T064237.200.json
-
-###
-
-PUT http://localhost:8080/nol?tag=654321&id_tess=777&data_end=2019-11-05 14:29:36
-Accept: */*
-Cache-Control: no-cache
-
-<> 2019-04-19T063908.200.json
-
-###
-
-PUT http://localhost:8080/nol?tag=654321&id_tess=777&data_end=2019-11-05 14:29:36
-Accept: */*
-Cache-Control: no-cache
-
-<> 2019-04-19T063419.200.json
-
-###
-
-PUT http://localhost:8080/nol?tag=654321&id_tess=777&data_end=2019-11-05 14:29:36
-Accept: */*
-Cache-Control: no-cache
-
-<> 2019-04-19T063033.200.json
-
-###
-
-PUT http://localhost:8080/nol?tag=654321&id_tess=777&data_end=2019-11-05 14:29:36
-Accept: */*
-Cache-Control: no-cache
-
-<> 2019-04-19T062417.500.json
-
-###
-
-PUT http://localhost:8080/nol?tag=654321&id_tess=777&data_end=2019-11-05 14:29:36
+POST http://localhost:8080/utente?id_tess=321321&nome=silvio&cogn=berlusconi&ind=villa wanda&mail=silvio@forzaitalia.it&sec_cred=850000&pwd=silviopwd
 Accept: */*
 Cache-Control: no-cache
 
 ###
 
-PUT http://localhost:8080/nol?tag=654321&id_tess=777&data_end=2019-11-05 14:29:36
+PUT http://localhost:8080/bike?tag=123456&new_tag=123456&new_stato=in riparazione
+Accept: */*
+Cache-Control: no-cache
+
+<> 2019-04-23T050633.200.json
+
+###
+
+DELETE http://localhost:8080/bike?tag=19696
 Accept: */*
 Cache-Control: no-cache
 
 ###
 
-PUT http://localhost:8080/nol?tag=654321&id_tess=777&data_end=2019-11-05 14:29:36
+POST http://localhost:8080/bike?tag=19696&stato=funzionante
+Accept: */*
+Cache-Control: no-cache
+
+<> 2019-04-23T050436.200.json
+
+###
+
+GET http://localhost:8080/nol?id_tess=777
+Accept: */*
+Cache-Control: no-cache
+
+<> 2019-04-22T044011.200.json
+
+###
+
+GET http://localhost:8080/utente
+Accept: */*
+Cache-Control: no-cache
+
+<> 2019-04-22T042919.200.json
+
+###
+
+GET http://localhost:8080/utente
 Accept: */*
 Cache-Control: no-cache
 
 ###
 
-PUT http://localhost:8080/nol?tag=654321&id_tess=777&data_end=2019-11-05 14:29:36
+GET http://localhost:8080/utente
 Accept: */*
 Cache-Control: no-cache
 
 ###
 
-PUT http://localhost:8080/nol?tag=654321&id_tess=777&data_end=2015-11-05 14:29:36
+GET http://localhost:8080/utente
 Accept: */*
 Cache-Control: no-cache
 
 ###
 
-POST http://localhost:8080/nol?tag=654321&id_tess=777
-Accept: */*
-Cache-Control: no-cache
-
-<> 2019-04-19T051525.200.json
-
-###
-
-POST http://localhost:8080/bike?tag=654321&stato=funzionante
-Accept: */*
-Cache-Control: no-cache
-
-<> 2019-04-19T051419.200.json
-
-###
-
-POST http://localhost:8080/bike?tag=987654&stato=funzionante
-Accept: */*
-Cache-Control: no-cache
-
-<> 2019-04-19T051404.200.json
-
-###
-
-POST http://localhost:8080/bike?tag=123456&stato=funzionante
-Accept: */*
-Cache-Control: no-cache
-
-<> 2019-04-19T051347.200.json
-
-###
-
-POST http://localhost:8080/utente?id_tess=999&nome=mario&cogn=rossi&ind=viale roma,66&mail=mario@mail.it&sec_cred=0&pwd=mariopwd
-Accept: */*
-Cache-Control: no-cache
-
-<> 2019-04-19T051232.200.json
-
-###
-
-POST http://localhost:8080/utente?id_tess=888&nome=gino&cogn=bianchi&ind=via italia,24&mail=gino@mail.it&sec_cred=0&pwd=ginopwd
-Accept: */*
-Cache-Control: no-cache
-
-<> 2019-04-19T051140.200.json
-
-###
-
-POST http://localhost:8080/utente?id_tess=777&nome=margherita&cogn=garello&ind=via zenale,2&mail=marghe@mail.it&sec_cred=0&pwd=marghepwd
-Accept: */*
-Cache-Control: no-cache
-
-<> 2019-04-19T051044.200.json
-
-###
-
-POST http://localhost:8080/nol?id_tess=666&tag=456789
-Accept: */*
-Cache-Control: no-cache
-
-<> 2019-04-19T050813.200.json
-
-###
-
-POST http://localhost:8080/utente?id_tess=666&nome=dario&cogn=iosca&ind=via zenale, 2&mail=dario@mail.it&pwd=mypwd&sec_cred=0
-Accept: */*
-Cache-Control: no-cache
-
-<> 2019-04-19T050610.200.json
-
-###
-
-POST http://localhost:8080/bike?tag=456789&stato=funzionante
-Accept: */*
-Cache-Control: no-cache
-
-<> 2019-04-19T050357.200.json
-
-###
-
-DELETE http://localhost:8080/bike?tag=456789
+GET http://localhost:8080/utente
 Accept: */*
 Cache-Control: no-cache
 
 ###
 
-DELETE http://localhost:8080/bike?tag=456789
+GET http://localhost:8080/utente
 Accept: */*
 Cache-Control: no-cache
 
 ###
 
-DELETE http://localhost:8080/utente?id_tess=aaabbb
+GET http://localhost:8080/utente
+Accept: */*
+Cache-Control: no-cache
+
+<> 2019-04-22T121022.200.json
+
+###
+
+GET http://localhost:8080/utente
 Accept: */*
 Cache-Control: no-cache
 
 ###
 
-POST http://localhost:8080/utente?id_tess=aaabbb&pwd=passwordutente&nome=mario&cogn=rossi&ind=via italia,4&mail=mail@mail.it&sec_cred=0
+GET http://localhost:8080/utente
 Accept: */*
 Cache-Control: no-cache
 
-<> 2019-04-17T073500.200.json
+<> 2019-04-22T120513.200.json
 
 ###
 
-POST http://localhost:8080/utente?id_tess=aaabbb&pwd=passwordutente&nome=mario&cogn=rossi&ind=via italia,4&mail=mail@mail.it&sec_cred=0
+GET http://localhost:8080/utente
 Accept: */*
 Cache-Control: no-cache
+
+<> 2019-04-22T120049.200.json
 
 ###
 
-POST http://localhost:8080/utente?id_tess=aaabbb&pwd=passwordutente
+GET http://localhost:8080/utente
 Accept: */*
 Cache-Control: no-cache
+
+<> 2019-04-22T120045.200.json
+
+###
+
+GET http://localhost:8080/utente
+Accept: */*
+Cache-Control: no-cache
+
+<> 2019-04-22T115639.200.json
+
+###
+
+GET http://localhost:8080/utente
+Accept: */*
+Cache-Control: no-cache
+
+<> 2019-04-22T114639.200.json
+
+###
+
+GET http://localhost:8080/utente
+Accept: */*
+Cache-Control: no-cache
+
+<> 2019-04-22T112240.200.json
+
+###
+
+GET http://localhost:8080/utente
+Accept: */*
+Cache-Control: no-cache
+
+<> 2019-04-22T111749.200.json
+
+###
+
+GET http://localhost:8080/utente
+Accept: */*
+Cache-Control: no-cache
+
+<> 2019-04-22T111601.200.json
 
 ###
 

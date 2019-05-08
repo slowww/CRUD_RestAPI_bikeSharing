@@ -1,0 +1,98 @@
+[
+  {
+    "mail": "dario@mail.it",
+    "id_tess": "666",
+    "sec_cred": 0,
+    "nome": "dario",
+    "pwd": "mypwd",
+    "cogn": "iosca",
+    "ind": "via zenale, 2"
+  }
+]
+[
+  {
+    "mail": "marghe@mail.it",
+    "id_tess": "777",
+    "sec_cred": -118828,
+    "nome": "margherita",
+    "pwd": "marghepwd",
+    "cogn": "garello",
+    "ind": "via zenale,2"
+  },
+  {
+    "mail": "marghe@mail.it",
+    "id_tess": "777",
+    "sec_cred": -118828,
+    "nome": "margherita",
+    "pwd": "marghepwd",
+    "cogn": "garello",
+    "ind": "via zenale,2"
+  }
+]
+[
+  {
+    "mail": "gino@mail.it",
+    "id_tess": "888",
+    "sec_cred": 0,
+    "nome": "gino",
+    "pwd": "ginopwd",
+    "cogn": "bianchi",
+    "ind": "via italia,24"
+  },
+  {
+    "mail": "gino@mail.it",
+    "id_tess": "888",
+    "sec_cred": 0,
+    "nome": "gino",
+    "pwd": "ginopwd",
+    "cogn": "bianchi",
+    "ind": "via italia,24"
+  },
+  {
+    "mail": "gino@mail.it",
+    "id_tess": "888",
+    "sec_cred": 0,
+    "nome": "gino",
+    "pwd": "ginopwd",
+    "cogn": "bianchi",
+    "ind": "via italia,24"
+  }
+]
+[
+  {
+    "mail": "mario@mail.it",
+    "id_tess": "999",
+    "sec_cred": 0,
+    "nome": "mario",
+    "pwd": "mariopwd",
+    "cogn": "rossi",
+    "ind": "viale roma,66"
+  },
+  {
+    "mail": "mario@mail.it",
+    "id_tess": "999",
+    "sec_cred": 0,
+    "nome": "mario",
+    "pwd": "mariopwd",
+    "cogn": "rossi",
+    "ind": "viale roma,66"
+  },
+  {
+    "mail": "mario@mail.it",
+    "id_tess": "999",
+    "sec_cred": 0,
+    "nome": "mario",
+    "pwd": "mariopwd",
+    "cogn": "rossi",
+    "ind": "viale roma,66"
+  },
+  {
+    "mail": "mario@mail.it",
+    "id_tess": "999",
+    "sec_cred": 0,
+    "nome": "mario",
+    "pwd": "mariopwd",
+    "cogn": "rossi",
+    "ind": "viale roma,66"
+  }
+]
